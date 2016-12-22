@@ -1,6 +1,6 @@
 /* http.h
    Mathieu Stefani, 13 August 2015
-   
+
    Http Layer
 */
 
@@ -100,7 +100,10 @@ namespace Uri {
         void clear() {
             params.clear();
         }
-
+        std::unordered_map<std::string, std::string> getMap() const
+        {
+          return params;
+        }
     private:
         std::unordered_map<std::string, std::string> params;
     };
@@ -139,7 +142,7 @@ public:
         drop of 5x with that lock
 
         If this turns out to be a problem, we might be able to replace the weak_ptr
-        trick to detect peer disconnection by a plain old "observer" pointer to a 
+        trick to detect peer disconnection by a plain old "observer" pointer to a
         tcp connection with a "stale" state
     */
 #ifdef LIBSTDCPP_SMARTPTR_LOCK_FIXME
@@ -530,7 +533,7 @@ private:
         : Response(request.version())
         , buf_(DefaultStreamSize)
         , transport_(transport)
-        , timeout_(transport, handler, std::move(request)) 
+        , timeout_(transport, handler, std::move(request))
     { }
 
     ResponseWriter(const ResponseWriter& other)
@@ -685,7 +688,7 @@ namespace Private {
     template<> struct Parser<Http::Request> : public ParserBase {
         Parser()
             : ParserBase()
-        { 
+        {
             allSteps[0].reset(new RequestLineStep(&request));
             allSteps[1].reset(new HeadersStep(&request));
             allSteps[2].reset(new BodyStep(&request));
@@ -763,5 +766,3 @@ std::shared_ptr<H> make_handler(Args&& ...args) {
 } // namespace Http
 
 } // namespace Net
-
-
